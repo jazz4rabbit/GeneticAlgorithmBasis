@@ -82,10 +82,18 @@ export PYTHONPATH="${PYTHONPATH}:$(pwd)"
 python -O example/onemax_example.py
 ```
 
+- onemax expriment
+
+```bash
+cd example
+mkdir -p onemax/{pkl,logbook}
+python -O experiment_onemax.py IND_SIZE # IND_SIZE is an individual size
+```
+
 - v_onemax problem
 
 ```bash
 cd example
 mkdir -p v_onemax/{pkl,logbook,basis}
-python -O experiment_v_onemax.py 10 # 10 is an individual size
+python -O experiment_v_onemax.py IND_SIZE
 ```
