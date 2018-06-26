@@ -9,7 +9,7 @@ This is a genetic algorithm experiment to investigate the influence of basis usi
 ### Implementation of problems
 - [x] `onemax`
 - [x] `v_onemax` (variant onemax)
-- [ ] `good_basis`
+- [x] `good_basis`
 - [ ] `nk-landscape`
 - [ ] `graph partition`
 
@@ -82,7 +82,7 @@ export PYTHONPATH="${PYTHONPATH}:$(pwd)"
 python -O example/onemax_example.py
 ```
 
-- onemax expriment
+- onemax experiment
 
 ```bash
 cd example
@@ -90,10 +90,18 @@ mkdir -p onemax/{pkl,logbook}
 python -O experiment_onemax.py IND_SIZE # IND_SIZE is an individual size
 ```
 
-- v_onemax problem
+- v_onemax experiment
 
 ```bash
 cd example
 mkdir -p v_onemax/{pkl,logbook,basis}
 python -O experiment_v_onemax.py IND_SIZE
+```
+
+- basis experiment on v_onemax
+
+```bash
+cd example
+mkdir -p good_basis{pkl,logbook}
+python -O experiment_basis_on_v_onemax IND_SIZE
 ```

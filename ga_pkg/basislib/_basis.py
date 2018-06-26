@@ -1,6 +1,8 @@
 import random
 import numpy
+import copy
 from functools import reduce
+from functools import wraps
 
 __all__ = ["basis", "emo"]
 
@@ -92,20 +94,36 @@ class basis(object):
         
         return mat
     
-    def change_basis(self, ind):
-        for e in self.data:
-            if e.mode == 'A':
-                ind[e.j] ^= ind[e.i]
-            else:
-                ind[e.i], ind[e.j] = ind[e.j], ind[e.i]
-        
-        return
+    def change_mate(self, func):
+        @wraps(func)
+        def wrapper(ind1, ind2):
+            ndim = len(ind1)
+            mat = self.to_mat(ndim)
+            type_ind = type(ind1)
+            ind1[:] = type_ind(mat @ ind1 % 2)
+            ind2[:] = type_ind(mat @ ind2 % 2)
+            return func(ind1, ind2)
+        return wrapper
     
-    def revert_basis(self, ind):
-        for e in self.data[::-1]:
-            if e.mode == 'A':
-                ind[e.j] ^= ind[e.i]
-            else:
-                ind[e.i], ind[e.j] = ind[e.j], ind[e.i]
-        
-        return
+    def change_mutate(self, func):
+        @wraps(func)
+        def wrapper(ind):
+            ndim = len(ind)
+            type_ind = type(ind)
+            
+            if ind.fitness.valid:
+                ind[:] = type_ind(self.to_mat(ndim) @ ind % 2)
+                #print("mat: {0}".format(ind))
+            
+            ind, = func(ind)
+            #print("mutate: {0}".format(ind))
+            ind[:] = type_ind(self.to_inv_mat(ndim) @ ind % 2)
+            #print("inv_mat: {0}".format(ind))
+            return ind,
+        return wrapper
+    
+    def change_basis(self, target_model):
+        target_model = copy.deepcopy(target_model)
+        target_model.toolbox.register("mate", self.change_mate(target_model.toolbox.mate))
+        target_model.toolbox.register("mutate", self.change_mutate(target_model.toolbox.mutate))
+        return target_model

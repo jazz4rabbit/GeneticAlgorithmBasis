@@ -1,6 +1,5 @@
 from ... import ga
 from ... import basislib
-from functools import wraps
 from deap import base
 from deap import creator
 from deap import tools
@@ -10,49 +9,34 @@ import copy
 
 import time
 
-__all__ = ["from_setting", "applyBasis"]
+__all__ = ["from_setting"]
 
-def change_mate(func, BASIS):
-    @wraps(func)
-    def wrapper(ind1, ind2):
-        BASIS.change_basis(ind1)
-        BASIS.change_basis(ind2)
-        return func(ind1, ind2)
-    return wrapper
+ndim_fit=5
+str_FitnessMax = "FitnessMax_{0}dim".format(ndim_fit)
+if not str_FitnessMax in vars(creator):
+    creator.create(str_FitnessMax, base.Fitness, weights=(1.0,)*ndim_fit)
+FitnessMax_Ndim = vars(creator)[str_FitnessMax]
+creator.create("Individual_basis", basislib.basis, fitness=FitnessMax_Ndim)
 
-def change_mutate(func, BASIS):
-    @wraps(func)
-    def wrapper(ind):
-        if ind.fitness.valid:
-            BASIS.change_basis(ind)
-        ind, = func(ind)
-        BASIS.revert_basis(ind)
-        return ind,
-    return wrapper
-
-def applyBasis(individual, target_model):
-    target_model = copy.deepcopy(target_model)
-    target_model.toolbox.register("mate", change_mate(target_model.toolbox.mate, individual))
-    target_model.toolbox.register("mutate", change_mutate(target_model.toolbox.mutate, individual))
-    #apply_basis_model, apply_basis_logbook = ga.run(target_model, ngen=target_ngen)
-    return target_model #apply_basis_model, apply_basis_logbook
-
-def evalBasis(individual, target_model, target_ngen):
+def evalBasis(individual, target_model_, target_ngen):
     """
         individual : basis
         target_ga
     """
-    target_model = copy.deepcopy(target_model)
-    
-    target_model.toolbox.register("mate", change_mate(target_model.toolbox.mate, individual))
-    target_model.toolbox.register("mutate", change_mutate(target_model.toolbox.mutate, individual))
-    
-    model, logbook = ga.run(target_model, ngen=target_ngen, verbose=False)
-    
-    #individual.target_model = model
-    #individual.logbook = logbook
-    #print(model.halloffame[0])
-    return model.toolbox.evaluate(model.halloffame[0])
+    fit = tuple()
+    for i in range(10):
+        target_model = copy.deepcopy(target_model_)
+
+        target_model.toolbox.register("mate", individual.change_mate(target_model.toolbox.mate))
+        target_model.toolbox.register("mutate", individual.change_mutate(target_model.toolbox.mutate))
+
+        model, logbook = ga.run(target_model, ngen=target_ngen, verbose=False)
+
+        fit += model.halloffame[0].fitness.values
+        #individual.target_model = model
+        #individual.logbook = logbook
+        #print(model.halloffame[0])
+    return tuple(sorted(fit,key=lambda x:-x)) #model.halloffame[0].fitness.values #model.toolbox.evaluate(model.halloffame[0])
 
 def mutEmos(individual, ndim, indpb):
     data = []
@@ -140,7 +124,7 @@ def from_setting(n, target_model, target_ngen, cxpb=0.5, mutpb=0.2):
     """
         n : size of population
         ndim : size of individual
-    """
+    """    
     target_model = copy.deepcopy(target_model)
     ndim = len(target_model.population[0])
     
@@ -152,16 +136,16 @@ def from_setting(n, target_model, target_ngen, cxpb=0.5, mutpb=0.2):
         toolbox.attr_emos)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-    toolbox.register("evaluate", evalBasis, target_model=target_model, target_ngen=target_ngen)
-    toolbox.register("mate", cxAlignOnePoint) # 구현해야함
+    toolbox.register("evaluate", evalBasis, target_model_=target_model, target_ngen=target_ngen)
+    toolbox.register("mate", cxAlignOnePoint)
     toolbox.register("mutate", mutEmos, ndim=ndim, indpb=0.05)
     toolbox.register("select", tools.selTournament, tournsize=3)
 
     stats = tools.Statistics(s)
-    stats.register("avg", numpy.mean)
-    stats.register("min", numpy.min)
-    stats.register("max", numpy.max)
-    stats.register("std", numpy.std)
+    stats.register("avg", numpy.mean, axis=0)
+    stats.register("min", numpy.min, axis=0)
+    stats.register("max", numpy.max, axis=0)
+    stats.register("std", numpy.std, axis=0)
 
     population = toolbox.population(n)
 
