@@ -31,11 +31,11 @@ pip install deap, numpy
 
 ```python
 from ga_pkg import ga
-from ga_pkg import problems
+from ga_pkg import problem
 
 # default of cxpb=0.5, mutpb=0.2
 # population size 20, individual size 10
-model = problems.onemax.from_setting(n=20, IND_SIZE=10)
+model = problem.onemax.from_setting(n=20, IND_SIZE=10)
 
 # search solution
 runed_model, logbook = ga.run(model, ngen=100)
