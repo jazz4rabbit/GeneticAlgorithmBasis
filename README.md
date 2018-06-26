@@ -8,8 +8,8 @@ This is a genetic algorithm experiment to investigate the influence of basis usi
 
 ### Implementation of problems
 - [x] `onemax`
-- [ ] `v_onemax` (variant onemax)
-- [ ] `good_basis`
+- [x] `v_onemax` (variant onemax)
+- [x] `good_basis`
 - [ ] `nk-landscape`
 - [ ] `graph partition`
 
@@ -71,6 +71,7 @@ load_model = ga.from_pkl("./onemax_model.pkl") # load
 
 
 ## Example of Running Code
+- onemax problem
 
 ```bash
 git clone https://github.com/jazz4rabbit/GeneticAlgorithmBasis
@@ -79,4 +80,28 @@ export PYTHONPATH="${PYTHONPATH}:$(pwd)"
 # or echo "export PYTHONPATH=\"\${PYTHONPATH}:$(pwd)\"" >> ~/.bashrc
 
 python -O example/onemax_example.py
+```
+
+- onemax experiment
+
+```bash
+cd example
+mkdir -p onemax/{pkl,logbook}
+python -O experiment_onemax.py IND_SIZE # IND_SIZE is an individual size
+```
+
+- v_onemax experiment
+
+```bash
+cd example
+mkdir -p v_onemax/{pkl,logbook,basis}
+python -O experiment_v_onemax.py IND_SIZE
+```
+
+- basis experiment on v_onemax
+
+```bash
+cd example
+mkdir -p good_basis{pkl,logbook}
+python -O experiment_basis_on_v_onemax IND_SIZE
 ```
