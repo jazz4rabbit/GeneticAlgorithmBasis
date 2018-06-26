@@ -10,7 +10,7 @@ This is a genetic algorithm experiment to investigate the influence of basis usi
 - [x] `onemax`
 - [x] `v_onemax` (variant onemax)
 - [x] `good_basis`
-- [ ] `nk-landscape`
+- [x] `nk-landscape`
 - [ ] `graph partition`
 
 ## Getting Started
