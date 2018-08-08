@@ -23,9 +23,7 @@ def to_csv(fname, logbook, mode='w', exist_header=False):
 
 def get_param(fname_graph):
     """
-        :n: is size of population
-        :IND_SIZE: n (nk-landscape)
-        :k: k (nk-landscape)
+        :fname_graph: filename of graph
     """
     if re.match(r'^.+/\w+?\d+\..*', fname_graph):
         IND_SIZE = int(re.sub(r'^.+/\w+?(\d+)\..*', r'\1', fname_graph))
@@ -49,7 +47,7 @@ if __name__ == "__main__":
         print("usage: {0} <fname_graph>".format(sys.argv[0]))
         sys.exit()
 
-    param = get_param(sys.argv[1]) # input IND_SIZE, k
+    param = get_param(sys.argv[1]) # input fname_graph
     
     model_origin = problem.graph_partition.from_setting(param.n, param.fname.graph)
     ga.to_pkl(model_origin, param.fname.origin)
