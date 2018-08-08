@@ -11,7 +11,7 @@ This is a genetic algorithm experiment to investigate the influence of basis usi
 - [x] `v_onemax` (variant onemax)
 - [x] `good_basis`
 - [x] `nk-landscape`
-- [ ] `graph partition`
+- [x] `graph partition`
 
 ## Getting Started
 
@@ -104,4 +104,11 @@ python -O experiment_v_onemax.py IND_SIZE
 cd example
 mkdir -p good_basis{pkl,logbook}
 python -O experiment_basis_on_v_onemax IND_SIZE
+```
+
+- graph experiment
+```bash
+cd example
+mkdir -p graph_partition/{pkl,logbook}
+python -O experiment_graph ../graph/G8.1 # graph filename
 ```
