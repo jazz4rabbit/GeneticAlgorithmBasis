@@ -11,3 +11,8 @@ creator.create("Individual_1dim", array.array, typecode='b', fitness=creator.Fit
 # for graph partition
 creator.create("FitnessMin_1dim", base.Fitness, weights=(-1.0,))
 creator.create("Individual_1dim_min", array.array, typecode='b', fitness=creator.FitnessMin_1dim)
+
+# for basis_epistasis
+#creator.create("FitnessMin_1dim", base.Fitness, weights=(-1.0,))
+creator.create("Individual_basis_epistasis", basislib.basis, fitness=creator.FitnessMin_1dim)
+
